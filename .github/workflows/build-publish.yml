@@ -57,7 +57,7 @@ jobs:
     - name: Checkout tag
       run: |
         git pull --tags
-        git checkout ${{ env.VERSION }}]
+        git checkout "${{ env.VERSION }}"
 
     - name: login to Helm registry
       run: helm registry login registry-1.docker.io -u starwit -p ${{ secrets.DOCKERHUB_TOKEN }}
@@ -76,6 +76,7 @@ jobs:
   build_docker:
     name: "Build Docker & publish image"
     runs-on: [self-hosted, linux, X64]
+    needs: build
 
     steps:
       - name: get helm
@@ -87,6 +88,11 @@ jobs:
             helm inspect chart . | grep version | awk -F ' ' '{print $2}'
             echo "VERSION=$(helm inspect chart . | grep version | awk -F ' ' '{print $2}')" >> "$GITHUB_ENV"
             echo ${{ env.VERSION }}
+
+      - name: Checkout tag
+        run: |
+            git pull --tags
+            git checkout ${{ env.VERSION }}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
