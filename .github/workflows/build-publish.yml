@@ -27,6 +27,7 @@ jobs:
       uses: azure/setup-helm@v4
     - name: "Get version from Helm chart"
       run: |
+        cd helm
         echo "VERSION=$(helm inspect chart . | grep version | awk -F ' ' '{print $2}')" >> "$GITHUB_OUTPUT"
         echo $VERSION
 
@@ -79,6 +80,7 @@ jobs:
         uses: azure/setup-helm@v4
       - name: "Get version from Helm chart"
         run: |
+            cd helm
             echo "VERSION=$(helm inspect chart . | grep version | awk -F ' ' '{print $2}')" >> "$GITHUB_OUTPUT"
             echo $VERSION
 
