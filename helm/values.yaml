@@ -1,6 +1,6 @@
 image:
-  repository: httpd-git
-  tag: 2.4.66-trixie
+  repository: starwitorg/httpd-git
+  tag: 2.4.66
   pullPolicy: IfNotPresent
 
 replicaCount: 1
