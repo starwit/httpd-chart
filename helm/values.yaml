@@ -16,11 +16,16 @@ service:
 
 ingress:
   enabled: true
-  host: landing.cluster.local
-  className: ""
+  className: "traefik"
+  hosts:
+    - host: landing.cluster.local
+      paths:
+        - path: /
+          pathType: Prefix
+
   annotations: {}
   # tls:
-  #   - secretName: tls-secret
+  #   - secretName: landing.cluster.local
   #     hosts:
   #       - landing.cluster.local
 
