@@ -25,11 +25,13 @@ jobs:
 
     - name: get helm
       uses: azure/setup-helm@v4
+
     - name: "Get version from Helm chart"
+      working-directory: helm
       run: |
-        cd helm
-        echo "VERSION=$(helm inspect chart . | grep version | awk -F ' ' '{print $2}')" >> "$GITHUB_OUTPUT"
-        echo $VERSION
+        helm inspect chart . | grep version | awk -F ' ' '{print $2}'
+        echo "VERSION=$(helm inspect chart . | grep version | awk -F ' ' '{print $2}')" >> "$GITHUB_ENV"
+        echo ${{ env.VERSION }}
 
     - name: checkout
       uses: actions/checkout@v4
@@ -72,17 +74,18 @@ jobs:
 
 
   build_docker:
-    name: "Build Docker image"
+    name: "Build Docker & publish image"
     runs-on: [self-hosted, linux, X64]
 
     steps:
       - name: get helm
         uses: azure/setup-helm@v4
+        
       - name: "Get version from Helm chart"
         working-directory: helm
         run: |
             helm inspect chart . | grep version | awk -F ' ' '{print $2}'
-            echo "VERSION=$(helm inspect chart . | grep version | awk -F ' ' '{print $2}')" >> "$GITHUB_OUTPUT"
+            echo "VERSION=$(helm inspect chart . | grep version | awk -F ' ' '{print $2}')" >> "$GITHUB_ENV"
             echo ${{ env.VERSION }}
 
       - name: Login to Docker Hub
@@ -97,9 +100,9 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: "{{defaultContext}}:dockerimage"
           file: ./Dockerfile
           push: true
           sbom: true
           provenance: mode=max
-          tags: ${{ env.DOCKERHUB_ORG }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}-${{ github.run_number }}
+          tags: ${{ env.DOCKERHUB_ORG }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
