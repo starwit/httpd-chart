@@ -1,0 +1,102 @@
+name: Create release
+
+# Creating maven and github release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: read
+
+env:
+  IMAGE_NAME: "httpd-git"
+  DOCKERHUB_USERNAME: starwit
+  DOCKERHUB_ORG: starwitorg  
+
+jobs:
+  build:
+    name: "Creating github release"
+    runs-on: [self-hosted, linux, X64]
+    
+    steps:
+    - name: Install GH CLI
+      uses: dev-hanz-ops/install-gh-cli-action@v0.2.0
+
+    - name: get helm
+      uses: azure/setup-helm@v4
+    - name: "Get version from Helm chart"
+      run: |
+        echo "VERSION=$(helm inspect chart . | grep version | awk -F ' ' '{print $2}')" >> "$GITHUB_OUTPUT"
+        echo $VERSION
+
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+
+    - name: create new version
+      run: |
+        echo "git add ."
+        git add .
+        modifications=$(git status | grep "modified" || true)
+        if [ ! -z "$modifications" ]
+        then
+          echo "modifications found: $modifications"
+          git push
+        fi
+
+    - name: Create github release
+      run: gh release create ${{ env.VERSION }} 
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Checkout tag
+      run: |
+        git pull --tags
+        git checkout ${{ env.VERSION }}]
+
+    - name: login to Helm registry
+      run: helm registry login registry-1.docker.io -u starwit -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: run helm update
+      working-directory: helm
+      run: helm dep update
+
+    - name: run helm package
+      run: helm package helm
+
+    - name: run helm push
+      run: helm push httpd-git-chart-${{ env.VERSION }}.tgz oci://registry-1.docker.io/starwitorg
+
+
+  build_docker:
+    name: "Build Docker image"
+    runs-on: [self-hosted, linux, X64]
+
+    steps:
+      - name: get helm
+        uses: azure/setup-helm@v4
+      - name: "Get version from Helm chart"
+        run: |
+            echo "VERSION=$(helm inspect chart . | grep version | awk -F ' ' '{print $2}')" >> "$GITHUB_OUTPUT"
+            echo $VERSION
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          sbom: true
+          provenance: mode=max
+          tags: ${{ env.DOCKERHUB_ORG }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}-${{ github.run_number }}
