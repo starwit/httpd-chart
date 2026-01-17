@@ -1,0 +1,33 @@
+image:
+  repository: httpd-git
+  tag: 2.4.66-trixie
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+# Repo and branch used by the container's update script
+repoUrl: https://codeberg.org/ztarbug/gtp-landingpage.git
+branch: main
+cronSchedule: "*/5 * * * *"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  host: landing.cluster.local
+  className: ""
+  annotations: {}
+  # tls:
+  #   - secretName: tls-secret
+  #     hosts:
+  #       - landing.cluster.local
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
