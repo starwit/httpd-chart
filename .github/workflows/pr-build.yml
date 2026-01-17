@@ -11,6 +11,11 @@ permissions:
   packages: read
   contents: read
 
+env:
+  IMAGE_NAME: "httpd-git"
+  DOCKERHUB_USERNAME: starwit
+  DOCKERHUB_ORG: starwitorg  
+
 jobs:
   checks:
     name: "Package Helm"
