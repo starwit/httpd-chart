@@ -37,3 +37,6 @@ Cron schedule:
 Notes:
 - The default DocumentRoot for the official `httpd` image is `/usr/local/apache2/htdocs`.
 - The `update_site.sh` script will remove existing files in the DocumentRoot before copying the repo contents. Adjust the script if you want merge behavior instead.
+
+# License
+Published under the [MIT license](../LICENSE).

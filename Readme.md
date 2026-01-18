@@ -2,10 +2,10 @@
 This repo contains a Dockerfile to run an httpd instance, that pulls a static web page from a (public) git repository.
 
 ## Docker image
-Based on official httpd image, this image adds git client and a script, that pulls static web page from a git repo.
+Based on official httpd image, this image adds git client and a script, that pulls static web page from a git repo. See image [readme](dockerimage/README.md)
 
 ## Helm chart
 Deploys Docker image to a Kubernetes cluster.
 
 # License
-TODO
+Published under the [MIT license](LICENSE).
