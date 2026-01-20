@@ -7,6 +7,8 @@ replicaCount: 1
 
 # Repo and branch used by the container's update script
 repoUrl: https://codeberg.org/ztarbug/gtp-landingpage.git
+# if set it will be used to clone code from private repos
+accessToken: ""
 branch: main
 cronSchedule: "*/5 * * * *"
 

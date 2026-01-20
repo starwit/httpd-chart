@@ -25,6 +25,14 @@ Override repository or branch at runtime by passing environment variables:
 docker run --rm -e REPO_URL=https://github.com/your/repo.git -e BRANCH=main -p 8080:80 httpd-git
 ```
 
+For private repositories, pass a GitHub access token:
+
+```bash
+docker run --rm -e REPO_URL=https://github.com/your/private-repo.git -e GITHUB_TOKEN=ghp_your_token_here -p 8080:80 httpd-git
+```
+
+> **Note:** The `GITHUB_TOKEN` environment variable is optional. If set, it will be used to authenticate with GitHub, allowing access to private repositories. The token is inserted into the clone URL and not logged.
+
 Manual update (run the update script directly inside the image):
 
 ```bash

@@ -6,8 +6,25 @@ REPO_URL="${REPO_URL:-https://github.com/example/repo.git}"
 BRANCH="${BRANCH:-main}"
 DEST=/usr/local/apache2/htdocs
 TMP_DIR=/tmp/site_repo
+GITHUB_TOKEN="${GITHUB_TOKEN:-}"
 
 log() { printf "%s\n" "$*"; }
+
+# Prepare the repository URL with authentication token if available
+prepare_git_url() {
+  local url="$1"
+  local token="$2"
+  
+  if [ -n "$token" ]; then
+    # Insert token into the GitHub HTTPS URL
+    # Convert https://github.com/user/repo.git to https://token@github.com/user/repo.git
+    echo "$url" | sed "s|https://|https://${token}@|g"
+  else
+    echo "$url"
+  fi
+}
+
+GIT_URL=$(prepare_git_url "$REPO_URL" "$GITHUB_TOKEN")
 
 log "Updating site from ${REPO_URL} (branch ${BRANCH})"
 
@@ -18,7 +35,7 @@ if [ -d "$TMP_DIR/.git" ]; then
   git reset --hard "origin/${BRANCH}"
 else
   rm -rf "$TMP_DIR"
-  git clone --depth 1 --branch "$BRANCH" "$REPO_URL" "$TMP_DIR"
+  git clone --depth 1 --branch "$BRANCH" "$GIT_URL" "$TMP_DIR"
 fi
 
 # Sync to DocumentRoot

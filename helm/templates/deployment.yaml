@@ -28,6 +28,8 @@ spec:
               value: "{{ .Values.branch }}"
             - name: CRON_SCHEDULE
               value: "{{ .Values.cronSchedule }}"
+            - name: GITHUB_TOKEN
+              value: "{{ .Values.accessToken }}"
           readinessProbe:
             httpGet:
               path: /

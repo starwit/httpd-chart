@@ -6,6 +6,7 @@ ARG BRANCH=main
 ENV REPO_URL=${REPO}
 ENV BRANCH=${BRANCH}
 ENV CRON_SCHEDULE="*/5 * * * *"
+ENV GITHUB_TOKEN=""
 
 # Install git, cron and ca-certificates (Debian-based httpd image)
 RUN apt-get update \

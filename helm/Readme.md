@@ -36,6 +36,7 @@ helm install my-httpd-git ./helm
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `repoUrl` | Git repository URL to pull content from | `https://codeberg.org/ztarbug/gtp-landingpage.git` |
+| `accessToken` | if set it will be used to clone code from private repos |  |
 | `branch` | Git branch to checkout | `main` |
 | `cronSchedule` | Cron schedule for updating content | `*/5 * * * *` (every 5 minutes) |
 | `replicaCount` | Number of replicas | `1` |
