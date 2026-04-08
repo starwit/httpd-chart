@@ -7,6 +7,8 @@ BRANCH="${BRANCH:-main}"
 DEST=/usr/local/apache2/htdocs
 TMP_DIR=/tmp/site_repo
 GITHUB_TOKEN="${GITHUB_TOKEN:-}"
+PLACEHOLDER="${PLACEHOLDER:-{{BASE_URL}}}"
+BASE_URL="${BASE_URL:-}"
 
 log() { printf "%s\n" "$*"; }
 
@@ -41,6 +43,12 @@ fi
 # Sync to DocumentRoot
 rm -rf "$DEST"/*
 cp -a "$TMP_DIR"/. "$DEST"/
+
+# Replace URLs if specified
+if [ -n "$BASE_URL" ]; then
+  log "Replacing placeholder $PLACEHOLDER with $BASE_URL"
+  find "$DEST" -type f -exec sed -i "s|$PLACEHOLDER|$BASE_URL|g" {} \;
+fi
 
 # Ensure permissions (best-effort; UID/GID in base image may vary)
 chown -R www-data:www-data "$DEST" 2>/dev/null || true

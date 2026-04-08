@@ -30,6 +30,10 @@ spec:
               value: "{{ .Values.cronSchedule }}"
             - name: GITHUB_TOKEN
               value: "{{ .Values.accessToken }}"
+            - name: BASE_URL
+              value: "{{ .Values.baseUrl }}"
+            - name: PLACEHOLDER
+              value: "{{ .Values.placeholder }}"
           readinessProbe:
             httpGet:
               path: /

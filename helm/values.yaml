@@ -12,6 +12,10 @@ accessToken: ""
 branch: main
 cronSchedule: "*/5 * * * *"
 
+# URL replacement settings
+baseUrl: ""
+placeholder: "{{BASE_URL}}"
+
 service:
   type: ClusterIP
   port: 80
