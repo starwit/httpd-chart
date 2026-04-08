@@ -7,7 +7,7 @@ BRANCH="${BRANCH:-main}"
 DEST=/usr/local/apache2/htdocs
 TMP_DIR=/tmp/site_repo
 GITHUB_TOKEN="${GITHUB_TOKEN:-}"
-PLACEHOLDER="${PLACEHOLDER:-{{BASE_URL}}}"
+PLACEHOLDER="${PLACEHOLDER:-}"
 BASE_URL="${BASE_URL:-}"
 
 log() { printf "%s\n" "$*"; }
