@@ -26,8 +26,10 @@ jobs:
     - name: get helm
       uses: azure/setup-helm@v4
 
-    - name: "output dir structure"
-      run: find .
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
 
     - name: "Get version from Helm chart"
       working-directory: helm
@@ -35,11 +37,6 @@ jobs:
         helm inspect chart . | grep version | awk -F ' ' '{print $2}'
         echo "VERSION=$(helm inspect chart . | grep version | awk -F ' ' '{print $2}')" >> "$GITHUB_ENV"
         echo ${{ env.VERSION }}
-
-    - name: checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: '0'
 
     - name: create new version
       run: |
