@@ -7,6 +7,8 @@ ENV REPO_URL=${REPO}
 ENV BRANCH=${BRANCH}
 ENV CRON_SCHEDULE="*/5 * * * *"
 ENV GITHUB_TOKEN=""
+ENV BASE_URL=""
+ENV PLACEHOLDER="{{BASE_URL}}"
 
 # Install git, cron and ca-certificates (Debian-based httpd image)
 RUN apt-get update \
@@ -17,13 +19,12 @@ RUN apt-get update \
 COPY update_site.sh /usr/local/bin/update_site.sh
 RUN chmod +x /usr/local/bin/update_site.sh
 
-# Add cron job (uses env CRON_SCHEDULE)
-RUN printf "%s root /usr/local/bin/update_site.sh >> /var/log/update_site.log 2>&1\n" "$CRON_SCHEDULE" > /etc/cron.d/update_site \
-    && chmod 0644 /etc/cron.d/update_site \
-    && touch /var/log/update_site.log
+# Add entrypoint script that sets up cron at runtime
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Expose default HTTP port
 EXPOSE 80
 
-# Run an initial update (so repo is fetched on start), then start cron and httpd
-CMD ["sh", "-c", "/usr/local/bin/update_site.sh >> /var/log/update_site.log 2>&1 || true; cron && exec httpd-foreground"]
+# Use entrypoint script to set up cron at runtime and start services
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
