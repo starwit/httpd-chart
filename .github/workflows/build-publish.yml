@@ -26,6 +26,9 @@ jobs:
     - name: get helm
       uses: azure/setup-helm@v4
 
+    - name: "output dir structure"
+      run: find .
+
     - name: "Get version from Helm chart"
       working-directory: helm
       run: |
